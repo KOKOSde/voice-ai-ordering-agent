@@ -1,0 +1,451 @@
+{
+  "restaurant": {
+    "name": "Bella's Italian Kitchen",
+    "tagline": "Authentic Italian Cuisine Since 1985",
+    "phone": "+1-555-BELLA-IT",
+    "hours": "11:00 AM - 10:00 PM Daily"
+  },
+  "categories": [
+    {
+      "name": "Appetizers",
+      "description": "Start your meal with our delicious starters",
+      "items": [
+        {
+          "id": "app-001",
+          "name": "Bruschetta",
+          "description": "Toasted Italian bread topped with fresh tomatoes, basil, garlic, and olive oil",
+          "price": 8.99,
+          "dietary": ["vegetarian", "vegan-optional"],
+          "popular": true
+        },
+        {
+          "id": "app-002",
+          "name": "Calamari Fritti",
+          "description": "Crispy fried calamari served with marinara sauce and lemon",
+          "price": 12.99,
+          "dietary": ["contains-gluten"],
+          "popular": true
+        },
+        {
+          "id": "app-003",
+          "name": "Caprese Salad",
+          "description": "Fresh mozzarella, ripe tomatoes, and basil drizzled with balsamic glaze",
+          "price": 10.99,
+          "dietary": ["vegetarian", "gluten-free"]
+        },
+        {
+          "id": "app-004",
+          "name": "Garlic Bread",
+          "description": "Freshly baked bread with garlic butter and herbs",
+          "price": 5.99,
+          "dietary": ["vegetarian"],
+          "addons": [
+            {"name": "Add Cheese", "price": 1.50}
+          ]
+        },
+        {
+          "id": "app-005",
+          "name": "Mozzarella Sticks",
+          "description": "Golden fried mozzarella served with marinara sauce",
+          "price": 9.99,
+          "dietary": ["vegetarian"]
+        },
+        {
+          "id": "app-006",
+          "name": "Antipasto Platter",
+          "description": "Assorted Italian meats, cheeses, olives, and roasted vegetables",
+          "price": 16.99,
+          "dietary": ["gluten-free"],
+          "serves": "2-3 people"
+        }
+      ]
+    },
+    {
+      "name": "Pizzas",
+      "description": "Hand-tossed, stone-baked authentic Italian pizzas",
+      "sizes": [
+        {"name": "Personal", "inches": 10, "price_modifier": 0},
+        {"name": "Medium", "inches": 14, "price_modifier": 4},
+        {"name": "Large", "inches": 18, "price_modifier": 8}
+      ],
+      "items": [
+        {
+          "id": "pizza-001",
+          "name": "Margherita",
+          "description": "Classic pizza with San Marzano tomato sauce, fresh mozzarella, basil, and olive oil",
+          "price": 14.99,
+          "dietary": ["vegetarian"],
+          "popular": true
+        },
+        {
+          "id": "pizza-002",
+          "name": "Pepperoni",
+          "description": "Tomato sauce, mozzarella, and premium pepperoni",
+          "price": 16.99,
+          "dietary": [],
+          "popular": true
+        },
+        {
+          "id": "pizza-003",
+          "name": "Quattro Formaggi",
+          "description": "Four cheese pizza with mozzarella, gorgonzola, parmesan, and fontina",
+          "price": 18.99,
+          "dietary": ["vegetarian"]
+        },
+        {
+          "id": "pizza-004",
+          "name": "Meat Lovers",
+          "description": "Pepperoni, Italian sausage, bacon, ham, and ground beef",
+          "price": 21.99,
+          "dietary": []
+        },
+        {
+          "id": "pizza-005",
+          "name": "Vegetarian Supreme",
+          "description": "Bell peppers, mushrooms, onions, olives, tomatoes, and spinach",
+          "price": 17.99,
+          "dietary": ["vegetarian", "vegan-optional"]
+        },
+        {
+          "id": "pizza-006",
+          "name": "Hawaiian",
+          "description": "Ham, pineapple, and mozzarella cheese",
+          "price": 16.99,
+          "dietary": []
+        },
+        {
+          "id": "pizza-007",
+          "name": "BBQ Chicken",
+          "description": "Grilled chicken, red onions, cilantro, and BBQ sauce",
+          "price": 18.99,
+          "dietary": []
+        },
+        {
+          "id": "pizza-008",
+          "name": "Truffle Mushroom",
+          "description": "Wild mushrooms, truffle oil, mozzarella, and arugula",
+          "price": 22.99,
+          "dietary": ["vegetarian"],
+          "chef_special": true
+        }
+      ],
+      "toppings": [
+        {"name": "Extra Cheese", "price": 2.00},
+        {"name": "Pepperoni", "price": 1.50},
+        {"name": "Mushrooms", "price": 1.00},
+        {"name": "Onions", "price": 1.00},
+        {"name": "Bell Peppers", "price": 1.00},
+        {"name": "Olives", "price": 1.00},
+        {"name": "Jalapeños", "price": 1.00},
+        {"name": "Italian Sausage", "price": 2.00},
+        {"name": "Bacon", "price": 2.00},
+        {"name": "Anchovies", "price": 1.50},
+        {"name": "Fresh Basil", "price": 0.75},
+        {"name": "Garlic", "price": 0.50}
+      ]
+    },
+    {
+      "name": "Pastas",
+      "description": "Fresh homemade pasta made daily",
+      "items": [
+        {
+          "id": "pasta-001",
+          "name": "Spaghetti Bolognese",
+          "description": "Spaghetti with slow-cooked meat sauce, topped with parmesan",
+          "price": 15.99,
+          "dietary": [],
+          "popular": true
+        },
+        {
+          "id": "pasta-002",
+          "name": "Fettuccine Alfredo",
+          "description": "Fettuccine in creamy parmesan sauce",
+          "price": 14.99,
+          "dietary": ["vegetarian"],
+          "addons": [
+            {"name": "Add Chicken", "price": 4.00},
+            {"name": "Add Shrimp", "price": 6.00}
+          ]
+        },
+        {
+          "id": "pasta-003",
+          "name": "Lasagna",
+          "description": "Layered pasta with meat sauce, ricotta, and mozzarella",
+          "price": 17.99,
+          "dietary": [],
+          "popular": true
+        },
+        {
+          "id": "pasta-004",
+          "name": "Penne Arrabbiata",
+          "description": "Penne in spicy tomato sauce with garlic and chili",
+          "price": 13.99,
+          "dietary": ["vegetarian", "vegan"]
+        },
+        {
+          "id": "pasta-005",
+          "name": "Carbonara",
+          "description": "Spaghetti with pancetta, egg, parmesan, and black pepper",
+          "price": 16.99,
+          "dietary": []
+        },
+        {
+          "id": "pasta-006",
+          "name": "Linguine alle Vongole",
+          "description": "Linguine with fresh clams in white wine and garlic sauce",
+          "price": 21.99,
+          "dietary": [],
+          "chef_special": true
+        },
+        {
+          "id": "pasta-007",
+          "name": "Ravioli di Ricotta",
+          "description": "Ricotta-filled ravioli in sage butter sauce",
+          "price": 18.99,
+          "dietary": ["vegetarian"]
+        },
+        {
+          "id": "pasta-008",
+          "name": "Pesto Genovese",
+          "description": "Trofie pasta with classic basil pesto, pine nuts, and parmesan",
+          "price": 15.99,
+          "dietary": ["vegetarian"]
+        }
+      ]
+    },
+    {
+      "name": "Entrees",
+      "description": "Main courses featuring the finest ingredients",
+      "items": [
+        {
+          "id": "entree-001",
+          "name": "Chicken Parmesan",
+          "description": "Breaded chicken breast topped with marinara and melted mozzarella, served with spaghetti",
+          "price": 19.99,
+          "dietary": [],
+          "popular": true
+        },
+        {
+          "id": "entree-002",
+          "name": "Eggplant Parmesan",
+          "description": "Breaded eggplant layered with marinara and cheese, served with spaghetti",
+          "price": 17.99,
+          "dietary": ["vegetarian"]
+        },
+        {
+          "id": "entree-003",
+          "name": "Grilled Salmon",
+          "description": "Atlantic salmon with lemon herb butter, served with roasted vegetables",
+          "price": 24.99,
+          "dietary": ["gluten-free"]
+        },
+        {
+          "id": "entree-004",
+          "name": "Veal Piccata",
+          "description": "Tender veal in lemon caper butter sauce, served with angel hair pasta",
+          "price": 26.99,
+          "dietary": []
+        },
+        {
+          "id": "entree-005",
+          "name": "Shrimp Scampi",
+          "description": "Jumbo shrimp sautéed in garlic butter and white wine, served over linguine",
+          "price": 23.99,
+          "dietary": []
+        }
+      ]
+    },
+    {
+      "name": "Salads",
+      "description": "Fresh and healthy salad options",
+      "items": [
+        {
+          "id": "salad-001",
+          "name": "Caesar Salad",
+          "description": "Romaine lettuce, parmesan, croutons, and Caesar dressing",
+          "price": 10.99,
+          "dietary": ["vegetarian"],
+          "addons": [
+            {"name": "Add Grilled Chicken", "price": 4.00},
+            {"name": "Add Shrimp", "price": 6.00}
+          ]
+        },
+        {
+          "id": "salad-002",
+          "name": "House Salad",
+          "description": "Mixed greens, tomatoes, cucumbers, and Italian vinaigrette",
+          "price": 8.99,
+          "dietary": ["vegetarian", "vegan", "gluten-free"]
+        },
+        {
+          "id": "salad-003",
+          "name": "Mediterranean Salad",
+          "description": "Mixed greens, feta, olives, red onion, and lemon olive oil dressing",
+          "price": 12.99,
+          "dietary": ["vegetarian", "gluten-free"]
+        }
+      ]
+    },
+    {
+      "name": "Desserts",
+      "description": "Sweet endings to your meal",
+      "items": [
+        {
+          "id": "dessert-001",
+          "name": "Tiramisu",
+          "description": "Classic Italian dessert with espresso-soaked ladyfingers and mascarpone",
+          "price": 8.99,
+          "dietary": ["vegetarian"],
+          "popular": true
+        },
+        {
+          "id": "dessert-002",
+          "name": "Cannoli",
+          "description": "Crispy pastry shells filled with sweet ricotta cream",
+          "price": 6.99,
+          "dietary": ["vegetarian"]
+        },
+        {
+          "id": "dessert-003",
+          "name": "Panna Cotta",
+          "description": "Italian cream dessert with berry compote",
+          "price": 7.99,
+          "dietary": ["vegetarian", "gluten-free"]
+        },
+        {
+          "id": "dessert-004",
+          "name": "Gelato",
+          "description": "Three scoops of authentic Italian gelato. Ask for today's flavors!",
+          "price": 6.99,
+          "dietary": ["vegetarian", "gluten-free"]
+        },
+        {
+          "id": "dessert-005",
+          "name": "Chocolate Lava Cake",
+          "description": "Warm chocolate cake with molten center, served with vanilla gelato",
+          "price": 9.99,
+          "dietary": ["vegetarian"]
+        }
+      ]
+    },
+    {
+      "name": "Beverages",
+      "description": "Drinks to complement your meal",
+      "items": [
+        {
+          "id": "drink-001",
+          "name": "Soft Drinks",
+          "description": "Coca-Cola, Diet Coke, Sprite, or Fanta",
+          "price": 2.99,
+          "dietary": ["vegan", "gluten-free"]
+        },
+        {
+          "id": "drink-002",
+          "name": "Italian Soda",
+          "description": "Sparkling water with your choice of fruit syrup",
+          "price": 3.99,
+          "dietary": ["vegan", "gluten-free"]
+        },
+        {
+          "id": "drink-003",
+          "name": "Espresso",
+          "description": "Authentic Italian espresso",
+          "price": 2.99,
+          "dietary": ["vegan", "gluten-free"]
+        },
+        {
+          "id": "drink-004",
+          "name": "Cappuccino",
+          "description": "Espresso with steamed milk and foam",
+          "price": 4.99,
+          "dietary": ["vegetarian", "gluten-free"]
+        },
+        {
+          "id": "drink-005",
+          "name": "Iced Tea",
+          "description": "Fresh brewed iced tea, sweetened or unsweetened",
+          "price": 2.99,
+          "dietary": ["vegan", "gluten-free"]
+        },
+        {
+          "id": "drink-006",
+          "name": "Limonata",
+          "description": "Fresh-squeezed Italian lemonade",
+          "price": 3.99,
+          "dietary": ["vegan", "gluten-free"]
+        },
+        {
+          "id": "drink-007",
+          "name": "San Pellegrino",
+          "description": "Sparkling mineral water (750ml)",
+          "price": 4.99,
+          "dietary": ["vegan", "gluten-free"]
+        }
+      ]
+    },
+    {
+      "name": "Wine",
+      "description": "Curated selection of Italian wines",
+      "items": [
+        {
+          "id": "wine-001",
+          "name": "House Chianti",
+          "description": "Glass of our house Chianti Classico",
+          "price": 8.99,
+          "dietary": ["vegan", "gluten-free"],
+          "type": "red"
+        },
+        {
+          "id": "wine-002",
+          "name": "Pinot Grigio",
+          "description": "Glass of crisp Italian Pinot Grigio",
+          "price": 8.99,
+          "dietary": ["vegan", "gluten-free"],
+          "type": "white"
+        },
+        {
+          "id": "wine-003",
+          "name": "Prosecco",
+          "description": "Glass of sparkling Prosecco",
+          "price": 9.99,
+          "dietary": ["vegan", "gluten-free"],
+          "type": "sparkling"
+        }
+      ]
+    }
+  ],
+  "specials": {
+    "daily_specials": {
+      "monday": "Buy one pasta, get second half off",
+      "tuesday": "Kids eat free with adult entrée",
+      "wednesday": "Wine Wednesday - Half price bottles",
+      "thursday": "Large pizza for the price of medium",
+      "friday": "Free appetizer with entrée purchase",
+      "saturday": "Date Night: 2 entrées + dessert for $49.99",
+      "sunday": "Family Sunday: Free large salad with 2+ entrées"
+    },
+    "combo_deals": [
+      {
+        "name": "Pizza & Wings Combo",
+        "description": "Large pizza + 12 wings + 2 drinks",
+        "price": 34.99
+      },
+      {
+        "name": "Pasta Duo",
+        "description": "Two pastas + garlic bread + 2 drinks",
+        "price": 32.99
+      },
+      {
+        "name": "Family Feast",
+        "description": "2 large pizzas + 1 pasta + garlic bread + 2L soda",
+        "price": 54.99
+      }
+    ]
+  },
+  "allergen_info": {
+    "note": "Please inform your server of any allergies. Our kitchen handles gluten, dairy, nuts, and shellfish.",
+    "gluten_free_options": "We offer gluten-free pasta and pizza crust upon request (+$2.00)",
+    "vegan_options": "Many items can be made vegan. Ask about our vegan cheese option."
+  }
+}
+
