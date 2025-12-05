@@ -28,8 +28,7 @@ def get_whisper_model():
 
     if _whisper_model is None:
         try:
-            from transformers import (WhisperForConditionalGeneration,
-                                      WhisperProcessor)
+            from transformers import WhisperForConditionalGeneration, WhisperProcessor
 
             model_name = os.getenv("WHISPER_MODEL", "openai/whisper-base")
             logger.info(f"Loading Whisper model: {model_name}")
