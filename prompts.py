@@ -71,23 +71,24 @@ Customer said: "{user_input}"
 Respond with JSON only:
 """
 
+
 def get_order_prompt(
     user_input: str,
     menu_context: str,
     conversation_history: list,
     current_order: list,
-    order_total: float
+    order_total: float,
 ) -> str:
     """
     Build a complete prompt for the LLM with all context.
-    
+
     Args:
         user_input: The customer's latest message
         menu_context: Relevant menu items from RAG search
         conversation_history: Recent conversation turns
         current_order: List of items in the current order
         order_total: Current order total
-    
+
     Returns:
         Complete prompt string for the LLM
     """
@@ -96,7 +97,7 @@ def get_order_prompt(
     for turn in conversation_history[-6:]:  # Last 6 turns for context
         role = "Customer" if turn["role"] == "user" else "You"
         history_text += f"{role}: {turn['content']}\n"
-    
+
     # Format current order
     if current_order:
         order_text = "Current order:\n"
@@ -104,11 +105,13 @@ def get_order_prompt(
             customizations = ""
             if item.get("customizations"):
                 customizations = f" ({', '.join(item['customizations'])})"
-            order_text += f"  {i}. {item['name']}{customizations} - ${item['price']:.2f}\n"
+            order_text += (
+                f"  {i}. {item['name']}{customizations} - ${item['price']:.2f}\n"
+            )
         order_text += f"  Subtotal: ${order_total:.2f}"
     else:
         order_text = "Current order: Empty"
-    
+
     prompt = f"""{SYSTEM_PROMPT}
 
 ## Relevant Menu Information
@@ -124,7 +127,7 @@ Customer: {user_input}
 
 ## Your Response
 Respond naturally as a phone order assistant. Remember to be conversational and keep it brief for phone calls:"""
-    
+
     return prompt
 
 
@@ -144,15 +147,19 @@ Respond with comma-separated search terms:"""
 
 
 def get_recommendation_prompt(
-    preferences: str,
-    dietary_restrictions: list,
-    menu_items: list
+    preferences: str, dietary_restrictions: list, menu_items: list
 ) -> str:
     """Build a prompt for generating recommendations."""
-    restrictions_text = ", ".join(dietary_restrictions) if dietary_restrictions else "none"
-    items_text = "\n".join([f"- {item['name']}: {item['description']} (${item['price']})" 
-                           for item in menu_items])
-    
+    restrictions_text = (
+        ", ".join(dietary_restrictions) if dietary_restrictions else "none"
+    )
+    items_text = "\n".join(
+        [
+            f"- {item['name']}: {item['description']} (${item['price']})"
+            for item in menu_items
+        ]
+    )
+
     return f"""Based on the customer's preferences and our menu, suggest 2-3 items.
 
 Customer preferences: {preferences}
@@ -166,13 +173,20 @@ Give a brief, friendly recommendation suitable for a phone conversation:"""
 
 def get_order_summary_prompt(order_items: list, total: float) -> str:
     """Build a prompt for summarizing the order."""
-    items_text = "\n".join([
-        f"- {item['name']}" + (f" ({item.get('size', 'regular')})" if item.get('size') else "") +
-        (f" with {', '.join(item.get('customizations', []))}" if item.get('customizations') else "") +
-        f" - ${item['price']:.2f}"
-        for item in order_items
-    ])
-    
+    items_text = "\n".join(
+        [
+            f"- {item['name']}"
+            + (f" ({item.get('size', 'regular')})" if item.get("size") else "")
+            + (
+                f" with {', '.join(item.get('customizations', []))}"
+                if item.get("customizations")
+                else ""
+            )
+            + f" - ${item['price']:.2f}"
+            for item in order_items
+        ]
+    )
+
     return f"""Summarize this order naturally for a phone conversation:
 
 Items:
@@ -252,4 +266,3 @@ FALLBACK_RESPONSES = [
     "Sorry about that - could you repeat your order?",
     "I missed that - what would you like to add to your order?",
 ]
-
