@@ -166,37 +166,34 @@ class LLMProcessor:
             intent["action"] = "confirm"
 
         # 2) Browse menu: explicit menu queries or "what <category> do you have"
-        elif (
-            any(
-                phrase in input_lower
-                for phrase in [
-                    "menu",
-                    "what do you have",
-                    "options",
-                    "tell me about",
+        elif any(
+            phrase in input_lower
+            for phrase in [
+                "menu",
+                "what do you have",
+                "options",
+                "tell me about",
+            ]
+        ) or (
+            "what" in input_lower
+            and any(
+                cat in input_lower
+                for cat in [
+                    "pizza",
+                    "pizzas",
+                    "pasta",
+                    "pastas",
+                    "appetizer",
+                    "appetizers",
+                    "dessert",
+                    "desserts",
+                    "drink",
+                    "drinks",
+                    "salad",
+                    "salads",
+                    "wine",
+                    "wines",
                 ]
-            )
-            or (
-                "what" in input_lower
-                and any(
-                    cat in input_lower
-                    for cat in [
-                        "pizza",
-                        "pizzas",
-                        "pasta",
-                        "pastas",
-                        "appetizer",
-                        "appetizers",
-                        "dessert",
-                        "desserts",
-                        "drink",
-                        "drinks",
-                        "salad",
-                        "salads",
-                        "wine",
-                        "wines",
-                    ]
-                )
             )
         ):
             intent["type"] = "browse_menu"
@@ -253,15 +250,12 @@ class LLMProcessor:
 
         # 6) Recommendations
         elif any(
-            phrase in input_lower
-            for phrase in ["recommend", "suggest", "what's good", "whats good", "popular", "favorite"]
+            phrase in input_lower for phrase in ["recommend", "suggest", "what's good", "whats good", "popular", "favorite"]
         ):
             intent["type"] = "get_recommendation"
 
         # 7) Fallback: treat as a question
-        elif "?" in user_input or any(
-            phrase in input_lower for phrase in ["what is", "how much", "does it", "is there"]
-        ):
+        elif "?" in user_input or any(phrase in input_lower for phrase in ["what is", "how much", "does it", "is there"]):
             intent["type"] = "ask_question"
 
         # Extract quantity
