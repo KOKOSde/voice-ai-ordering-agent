@@ -92,12 +92,8 @@ class Database:
         # Create indexes
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_orders_caller ON orders(caller)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status)")
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_interactions_call_sid ON interactions(call_sid)"
-        )
-        cursor.execute(
-            "CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics(event_type)"
-        )
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_interactions_call_sid ON interactions(call_sid)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics(event_type)")
 
         conn.commit()
         logger.info(f"Database initialized: {self.db_path}")
@@ -142,9 +138,7 @@ class Database:
         logger.info(f"Order saved: {order_id}")
 
         # Log analytics event
-        self._log_event(
-            "order_created", {"order_id": order_id, "total": order_data.get("total", 0)}
-        )
+        self._log_event("order_created", {"order_id": order_id, "total": order_data.get("total", 0)})
 
         return order_id
 
@@ -206,9 +200,7 @@ class Database:
         )
         conn.commit()
 
-        self._log_event(
-            "order_status_changed", {"order_id": order_id, "status": status}
-        )
+        self._log_event("order_status_changed", {"order_id": order_id, "status": status})
 
         return cursor.rowcount > 0
 
@@ -223,9 +215,7 @@ class Database:
         )
         conn.commit()
 
-        self._log_event(
-            "payment_status_changed", {"order_id": order_id, "status": payment_status}
-        )
+        self._log_event("payment_status_changed", {"order_id": order_id, "status": payment_status})
 
         return cursor.rowcount > 0
 
@@ -348,9 +338,7 @@ class Database:
             date = datetime.now() - timedelta(days=i)
             date_str = date.strftime("%Y-%m-%d")
 
-            cursor.execute(
-                "SELECT SUM(total) FROM orders WHERE DATE(created_at) = ?", (date_str,)
-            )
+            cursor.execute("SELECT SUM(total) FROM orders WHERE DATE(created_at) = ?", (date_str,))
 
             total = cursor.fetchone()[0] or 0
             results.append({"date": date_str, "revenue": round(total, 2)})

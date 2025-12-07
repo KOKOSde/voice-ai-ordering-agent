@@ -105,9 +105,7 @@ def get_order_prompt(
             customizations = ""
             if item.get("customizations"):
                 customizations = f" ({', '.join(item['customizations'])})"
-            order_text += (
-                f"  {i}. {item['name']}{customizations} - ${item['price']:.2f}\n"
-            )
+            order_text += f"  {i}. {item['name']}{customizations} - ${item['price']:.2f}\n"
         order_text += f"  Subtotal: ${order_total:.2f}"
     else:
         order_text = "Current order: Empty"
@@ -146,19 +144,10 @@ Extract:
 Respond with comma-separated search terms:"""
 
 
-def get_recommendation_prompt(
-    preferences: str, dietary_restrictions: list, menu_items: list
-) -> str:
+def get_recommendation_prompt(preferences: str, dietary_restrictions: list, menu_items: list) -> str:
     """Build a prompt for generating recommendations."""
-    restrictions_text = (
-        ", ".join(dietary_restrictions) if dietary_restrictions else "none"
-    )
-    items_text = "\n".join(
-        [
-            f"- {item['name']}: {item['description']} (${item['price']})"
-            for item in menu_items
-        ]
-    )
+    restrictions_text = ", ".join(dietary_restrictions) if dietary_restrictions else "none"
+    items_text = "\n".join([f"- {item['name']}: {item['description']} (${item['price']})" for item in menu_items])
 
     return f"""Based on the customer's preferences and our menu, suggest 2-3 items.
 
@@ -177,11 +166,7 @@ def get_order_summary_prompt(order_items: list, total: float) -> str:
         [
             f"- {item['name']}"
             + (f" ({item.get('size', 'regular')})" if item.get("size") else "")
-            + (
-                f" with {', '.join(item.get('customizations', []))}"
-                if item.get("customizations")
-                else ""
-            )
+            + (f" with {', '.join(item.get('customizations', []))}" if item.get("customizations") else "")
             + f" - ${item['price']:.2f}"
             for item in order_items
         ]

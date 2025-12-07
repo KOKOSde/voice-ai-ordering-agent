@@ -231,9 +231,7 @@ class TTSService:
     High-level TTS service with engine selection and caching.
     """
 
-    def __init__(
-        self, default_engine: str = "gtts", default_voice: Optional[str] = None
-    ):
+    def __init__(self, default_engine: str = "gtts", default_voice: Optional[str] = None):
         self.default_engine = default_engine
         self.default_voice = default_voice
         self._check_engines()

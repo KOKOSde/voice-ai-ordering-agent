@@ -75,9 +75,7 @@ class MenuRAG:
             for item in category.get("items", []):
                 # Create a rich text document for each menu item
                 doc_text = (
-                    f"{item['name']} - {category_name}. "
-                    f"{item.get('description', '')} "
-                    f"Price: ${item['price']:.2f}. "
+                    f"{item['name']} - {category_name}. " f"{item.get('description', '')} " f"Price: ${item['price']:.2f}. "
                 )
 
                 # Add dietary info
@@ -95,9 +93,7 @@ class MenuRAG:
                 # Add add-ons
                 addons = item.get("addons", [])
                 if addons:
-                    addon_text = ", ".join(
-                        [f"{a['name']} (+${a['price']})" for a in addons]
-                    )
+                    addon_text = ", ".join([f"{a['name']} (+${a['price']})" for a in addons])
                     doc_text += f"Add-ons available: {addon_text}. "
 
                 self.documents.append(
@@ -151,9 +147,7 @@ class MenuRAG:
 
             # Create embeddings
             texts = [doc["text"] for doc in self.documents]
-            self.embeddings = self.embedding_model.encode(
-                texts, convert_to_numpy=True, show_progress_bar=False
-            )
+            self.embeddings = self.embedding_model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
 
             # Normalize for cosine similarity
             faiss.normalize_L2(self.embeddings)
@@ -195,9 +189,7 @@ class MenuRAG:
             import faiss
 
             # Encode query
-            query_embedding = self.embedding_model.encode(
-                [query], convert_to_numpy=True
-            )
+            query_embedding = self.embedding_model.encode([query], convert_to_numpy=True)
             faiss.normalize_L2(query_embedding)
 
             # Search
@@ -252,8 +244,7 @@ class MenuRAG:
         for _, doc in top_docs:
             item = doc["item"]
             results.append(
-                f"• {item['name']} ({doc['category']}) - ${item.get('price', 'N/A')}\n"
-                f"  {item.get('description', '')}"
+                f"• {item['name']} ({doc['category']}) - ${item.get('price', 'N/A')}\n" f"  {item.get('description', '')}"
             )
 
         return "\n".join(results) if results else "No matching items found."
@@ -272,11 +263,7 @@ class MenuRAG:
     def get_category_items(self, category: str) -> List[Dict[str, Any]]:
         """Get all items in a category."""
         category_lower = category.lower()
-        return [
-            doc["item"]
-            for doc in self.documents
-            if doc.get("category", "").lower() == category_lower
-        ]
+        return [doc["item"] for doc in self.documents if doc.get("category", "").lower() == category_lower]
 
     def get_full_menu(self) -> Dict[str, Any]:
         """Return the complete menu data."""
@@ -290,9 +277,7 @@ class MenuRAG:
         """Get items matching a dietary restriction."""
         restriction_lower = restriction.lower()
         return [
-            doc["item"]
-            for doc in self.documents
-            if restriction_lower in [d.lower() for d in doc["item"].get("dietary", [])]
+            doc["item"] for doc in self.documents if restriction_lower in [d.lower() for d in doc["item"].get("dietary", [])]
         ]
 
 

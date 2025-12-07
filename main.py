@@ -44,9 +44,7 @@ payment_processor = PaymentProcessor()
 # Twilio client
 twilio_client = None
 if os.getenv("TWILIO_ACCOUNT_SID") and os.getenv("TWILIO_AUTH_TOKEN"):
-    twilio_client = TwilioClient(
-        os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN")
-    )
+    twilio_client = TwilioClient(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
 
 
 @asynccontextmanager
@@ -132,9 +130,7 @@ async def voice_webhook(request: Request, background_tasks: BackgroundTasks):
     response.redirect("/voice/timeout")
 
     # Log the interaction
-    background_tasks.add_task(
-        log_interaction, call_sid=call_sid, direction="outgoing", text=welcome_text
-    )
+    background_tasks.add_task(log_interaction, call_sid=call_sid, direction="outgoing", text=welcome_text)
 
     return Response(content=str(response), media_type="application/xml")
 
@@ -151,9 +147,7 @@ async def process_voice_input(request: Request, background_tasks: BackgroundTask
     speech_result = form_data.get("SpeechResult", "")
     confidence = form_data.get("Confidence", "0")
 
-    logger.info(
-        f"🎤 Speech input - CallSid: {call_sid}, Text: '{speech_result}', Confidence: {confidence}"
-    )
+    logger.info(f"🎤 Speech input - CallSid: {call_sid}, Text: '{speech_result}', Confidence: {confidence}")
 
     # Get session context
     session = session_manager.get_or_create(call_sid)
@@ -161,9 +155,7 @@ async def process_voice_input(request: Request, background_tasks: BackgroundTask
     session.setdefault("current_order", [])
 
     # Log user input
-    background_tasks.add_task(
-        log_interaction, call_sid=call_sid, direction="incoming", text=speech_result
-    )
+    background_tasks.add_task(log_interaction, call_sid=call_sid, direction="incoming", text=speech_result)
 
     # Add to conversation history
     session["conversation_history"].append(
@@ -179,9 +171,7 @@ async def process_voice_input(request: Request, background_tasks: BackgroundTask
         ai_response, order_update = await process_with_llm(speech_result, session)
     except Exception as e:
         logger.error(f"LLM processing error: {e}")
-        ai_response = (
-            "I'm sorry, I had trouble understanding that. Could you please repeat?"
-        )
+        ai_response = "I'm sorry, I had trouble understanding that. Could you please repeat?"
         order_update = None
 
     # Update order if needed
@@ -214,8 +204,7 @@ async def process_voice_input(request: Request, background_tasks: BackgroundTask
 
     # Check for call completion keywords
     should_end_call = any(
-        keyword in ai_response.lower()
-        for keyword in ["thank you for ordering", "goodbye", "have a great day"]
+        keyword in ai_response.lower() for keyword in ["thank you for ordering", "goodbye", "have a great day"]
     )
 
     # Create TwiML response
@@ -239,9 +228,7 @@ async def process_voice_input(request: Request, background_tasks: BackgroundTask
         response.redirect("/voice/timeout")
 
     # Log the response
-    background_tasks.add_task(
-        log_interaction, call_sid=call_sid, direction="outgoing", text=ai_response
-    )
+    background_tasks.add_task(log_interaction, call_sid=call_sid, direction="outgoing", text=ai_response)
 
     return Response(content=str(response), media_type="application/xml")
 
@@ -260,8 +247,7 @@ async def voice_timeout(request: Request):
 
     if timeout_count >= 3:
         response.say(
-            "I haven't heard from you in a while. "
-            "If you'd like to place an order, please call back anytime. Goodbye!",
+            "I haven't heard from you in a while. " "If you'd like to place an order, please call back anytime. Goodbye!",
             voice="Polly.Joanna",
         )
         response.hangup()
@@ -273,9 +259,7 @@ async def voice_timeout(request: Request):
             speechTimeout="auto",
             language="en-US",
         )
-        gather.say(
-            "I'm still here! What would you like to order?", voice="Polly.Joanna"
-        )
+        gather.say("I'm still here! What would you like to order?", voice="Polly.Joanna")
         response.append(gather)
         response.redirect("/voice/timeout")
 
@@ -341,9 +325,7 @@ async def get_menu():
     return menu_rag.get_full_menu()
 
 
-async def process_with_llm(
-    user_input: str, session: dict
-) -> tuple[str, Optional[dict]]:
+async def process_with_llm(user_input: str, session: dict) -> tuple[str, Optional[dict]]:
     """
     Process user input with LLM and RAG.
     Returns AI response and any order updates.
@@ -375,9 +357,7 @@ async def process_with_llm(
 
     # Update session total
     if order_update and order_update.get("items"):
-        session["order_total"] = order_total + sum(
-            item.get("price", 0) for item in order_update.get("items", [])
-        )
+        session["order_total"] = order_total + sum(item.get("price", 0) for item in order_update.get("items", []))
 
     return response, order_update
 
@@ -426,6 +406,4 @@ def log_interaction(call_sid: str, direction: str, text: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(
-        "main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=True
-    )
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", 8000)), reload=True)

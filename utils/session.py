@@ -134,9 +134,7 @@ class SessionManager:
             if data:
                 session = json.loads(data)
                 session["last_activity"] = datetime.now().isoformat()
-                self._redis_client.setex(
-                    f"session:{session_id}", SESSION_TIMEOUT, json.dumps(session)
-                )
+                self._redis_client.setex(f"session:{session_id}", SESSION_TIMEOUT, json.dumps(session))
                 return session
             return None
         except Exception as e:
@@ -165,9 +163,7 @@ class SessionManager:
     def _save_redis(self, session_id: str, session: Dict[str, Any]):
         """Save session to Redis with expiration."""
         try:
-            self._redis_client.setex(
-                f"session:{session_id}", SESSION_TIMEOUT, json.dumps(session)
-            )
+            self._redis_client.setex(f"session:{session_id}", SESSION_TIMEOUT, json.dumps(session))
         except Exception as e:
             logger.error(f"Redis save error: {e}")
             self._save_memory(session_id, session)

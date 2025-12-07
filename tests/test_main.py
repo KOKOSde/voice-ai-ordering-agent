@@ -262,9 +262,7 @@ class TestPaymentProcessor:
         from utils.payment import PaymentProcessor
 
         processor = PaymentProcessor()
-        result = await processor.process_payment(
-            order_id="TEST-001", amount=25.99, payment_method="card"
-        )
+        result = await processor.process_payment(order_id="TEST-001", amount=25.99, payment_method="card")
 
         assert "payment_id" in result
         assert result["status"] in ["completed", "failed"]

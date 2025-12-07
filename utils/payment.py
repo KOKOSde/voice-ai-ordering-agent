@@ -8,7 +8,7 @@ import os
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -63,14 +63,10 @@ class PaymentProcessor:
         """
         payment_id = f"pay_{uuid.uuid4().hex[:16]}"
 
-        logger.info(
-            f"Processing payment {payment_id} for order {order_id}: ${amount:.2f}"
-        )
+        logger.info(f"Processing payment {payment_id} for order {order_id}: ${amount:.2f}")
 
         if self.use_stripe and payment_method == "card":
-            return await self._process_stripe_payment(
-                payment_id, order_id, amount, customer_id
-            )
+            return await self._process_stripe_payment(payment_id, order_id, amount, customer_id)
         else:
             return self._simulate_payment(payment_id, order_id, amount, payment_method)
 
@@ -132,9 +128,7 @@ class PaymentProcessor:
                 "status": PaymentStatus.FAILED.value,
             }
 
-    def _simulate_payment(
-        self, payment_id: str, order_id: str, amount: float, payment_method: str
-    ) -> Dict[str, Any]:
+    def _simulate_payment(self, payment_id: str, order_id: str, amount: float, payment_method: str) -> Dict[str, Any]:
         """
         Simulate a payment (for demo/testing).
         """
@@ -153,9 +147,7 @@ class PaymentProcessor:
             "order_id": order_id,
             "amount": amount,
             "method": payment_method,
-            "status": (
-                PaymentStatus.COMPLETED.value if success else PaymentStatus.FAILED.value
-            ),
+            "status": (PaymentStatus.COMPLETED.value if success else PaymentStatus.FAILED.value),
             "created_at": datetime.now().isoformat(),
             "completed_at": datetime.now().isoformat() if success else None,
             "simulated": True,
@@ -183,9 +175,7 @@ class PaymentProcessor:
         """Get all payments for an order."""
         return [p for p in self._payments.values() if p.get("order_id") == order_id]
 
-    async def refund_payment(
-        self, payment_id: str, amount: Optional[float] = None
-    ) -> Dict[str, Any]:
+    async def refund_payment(self, payment_id: str, amount: Optional[float] = None) -> Dict[str, Any]:
         """
         Refund a payment (full or partial).
 
@@ -211,18 +201,14 @@ class PaymentProcessor:
         else:
             return self._simulate_refund(payment_id, refund_amount)
 
-    async def _refund_stripe(
-        self, payment: Dict[str, Any], amount: float
-    ) -> Dict[str, Any]:
+    async def _refund_stripe(self, payment: Dict[str, Any], amount: float) -> Dict[str, Any]:
         """Process Stripe refund."""
         try:
             import stripe
 
             stripe.api_key = self.stripe_api_key
 
-            refund = stripe.Refund.create(
-                payment_intent=payment["stripe_id"], amount=int(amount * 100)
-            )
+            refund = stripe.Refund.create(payment_intent=payment["stripe_id"], amount=int(amount * 100))
 
             payment["status"] = PaymentStatus.REFUNDED.value
             payment["refund_id"] = refund.id
@@ -243,9 +229,7 @@ class PaymentProcessor:
             payment["refunded_at"] = datetime.now().isoformat()
             payment["refund_amount"] = amount
 
-        logger.info(
-            f"Refund processed for payment {payment_id}: ${amount:.2f} (simulated)"
-        )
+        logger.info(f"Refund processed for payment {payment_id}: ${amount:.2f} (simulated)")
 
         return {
             "success": True,
@@ -282,9 +266,7 @@ class POSIntegration:
                 import aiohttp
 
                 async with aiohttp.ClientSession() as session:
-                    async with session.post(
-                        f"{self.pos_endpoint}/orders", json=order
-                    ) as response:
+                    async with session.post(f"{self.pos_endpoint}/orders", json=order) as response:
                         return response.status == 200
 
             # Simulation: add to queue
@@ -303,9 +285,7 @@ class POSIntegration:
             logger.error(f"Failed to send order to kitchen: {e}")
             return False
 
-    async def print_receipt(
-        self, order: Dict[str, Any], printer_id: str = "default"
-    ) -> bool:
+    async def print_receipt(self, order: Dict[str, Any], printer_id: str = "default") -> bool:
         """
         Print receipt for an order.
 
@@ -358,12 +338,6 @@ class POSIntegration:
         """Get kitchen queue status."""
         return {
             "pending": len([o for o in self._order_queue if o["status"] == "received"]),
-            "in_progress": len(
-                [o for o in self._order_queue if o["status"] == "preparing"]
-            ),
+            "in_progress": len([o for o in self._order_queue if o["status"] == "preparing"]),
             "completed": len([o for o in self._order_queue if o["status"] == "ready"]),
         }
-
-
-# Type hint fix
-from typing import List

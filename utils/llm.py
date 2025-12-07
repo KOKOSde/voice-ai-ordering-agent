@@ -30,9 +30,7 @@ class LLMProcessor:
         Args:
             model_name: Model to use (default from environment)
         """
-        self.model_name = model_name or os.getenv(
-            "LLM_MODEL", "mistralai/Mistral-7B-Instruct-v0.2"
-        )
+        self.model_name = model_name or os.getenv("LLM_MODEL", "mistralai/Mistral-7B-Instruct-v0.2")
         self.hf_token = os.getenv("HUGGINGFACE_TOKEN")
         self.openai_key = os.getenv("OPENAI_API_KEY")
 
@@ -71,16 +69,12 @@ class LLMProcessor:
 
             logger.info(f"Loading HuggingFace model: {self.model_name}")
 
-            self._tokenizer = AutoTokenizer.from_pretrained(
-                self.model_name, token=self.hf_token
-            )
+            self._tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=self.hf_token)
 
             self._model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
                 token=self.hf_token,
-                torch_dtype=(
-                    torch.float16 if torch.cuda.is_available() else torch.float32
-                ),
+                torch_dtype=(torch.float16 if torch.cuda.is_available() else torch.float32),
                 device_map="auto" if torch.cuda.is_available() else None,
                 low_cpu_mem_usage=True,
             )
@@ -100,9 +94,7 @@ class LLMProcessor:
             from transformers import pipeline
 
             # Use a smaller model for local testing
-            self._model = pipeline(
-                "text-generation", model="distilgpt2", max_length=150
-            )
+            self._model = pipeline("text-generation", model="distilgpt2", max_length=150)
 
             logger.info("Local model (distilgpt2) loaded for testing")
 
@@ -154,10 +146,7 @@ class LLMProcessor:
         intent = {"type": "unknown", "items": [], "action": None, "quantity": 1}
 
         # Intent detection patterns
-        if any(
-            word in input_lower
-            for word in ["menu", "what do you have", "options", "tell me about"]
-        ):
+        if any(word in input_lower for word in ["menu", "what do you have", "options", "tell me about"]):
             intent["type"] = "browse_menu"
             # Extract category
             for category in [
@@ -170,9 +159,7 @@ class LLMProcessor:
                 "wine",
             ]:
                 if category in input_lower:
-                    intent["category"] = (
-                        category + "s" if not category.endswith("s") else category
-                    )
+                    intent["category"] = category + "s" if not category.endswith("s") else category
 
         elif any(
             word in input_lower
@@ -190,10 +177,7 @@ class LLMProcessor:
             intent["action"] = "add"
             intent["items"] = self._extract_items(input_lower)
 
-        elif any(
-            word in input_lower
-            for word in ["remove", "cancel", "take off", "no more", "delete"]
-        ):
+        elif any(word in input_lower for word in ["remove", "cancel", "take off", "no more", "delete"]):
             intent["type"] = "remove_item"
             intent["action"] = "remove"
             intent["items"] = self._extract_items(input_lower)
@@ -224,22 +208,14 @@ class LLMProcessor:
         ):
             intent["type"] = "check_order"
 
-        elif any(
-            word in input_lower
-            for word in ["recommend", "suggest", "what's good", "popular", "favorite"]
-        ):
+        elif any(word in input_lower for word in ["recommend", "suggest", "what's good", "popular", "favorite"]):
             intent["type"] = "get_recommendation"
 
-        elif "?" in user_input or any(
-            word in input_lower
-            for word in ["what is", "how much", "does it", "is there"]
-        ):
+        elif "?" in user_input or any(word in input_lower for word in ["what is", "how much", "does it", "is there"]):
             intent["type"] = "ask_question"
 
         # Extract quantity
-        quantity_match = re.search(
-            r"\b(one|two|three|four|five|six|\d+)\b", input_lower
-        )
+        quantity_match = re.search(r"\b(one|two|three|four|five|six|\d+)\b", input_lower)
         if quantity_match:
             quantity_map = {
                 "one": 1,
@@ -305,9 +281,7 @@ class LLMProcessor:
 
         return found
 
-    def _process_intent(
-        self, intent: Dict[str, Any], user_input: str
-    ) -> Optional[Dict[str, Any]]:
+    def _process_intent(self, intent: Dict[str, Any], user_input: str) -> Optional[Dict[str, Any]]:
         """Convert intent to order update."""
         if intent["action"] == "add" and intent["items"]:
             # Build order items with estimated prices
@@ -380,9 +354,7 @@ class LLMProcessor:
         try:
             import torch
 
-            inputs = self._tokenizer(
-                prompt, return_tensors="pt", truncation=True, max_length=2048
-            )
+            inputs = self._tokenizer(prompt, return_tensors="pt", truncation=True, max_length=2048)
 
             if torch.cuda.is_available():
                 inputs = inputs.to("cuda")

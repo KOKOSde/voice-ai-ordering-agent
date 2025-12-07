@@ -77,19 +77,13 @@ def transcribe_audio(audio_source: str, language: str = "en") -> Tuple[str, floa
         audio, sample_rate = librosa.load(audio_path, sr=16000)
 
         # Process with Whisper
-        input_features = processor(
-            audio, sampling_rate=16000, return_tensors="pt"
-        ).input_features.to(device)
+        input_features = processor(audio, sampling_rate=16000, return_tensors="pt").input_features.to(device)
 
         # Generate transcription
         with torch.no_grad():
-            predicted_ids = model.generate(
-                input_features, language=language, task="transcribe"
-            )
+            predicted_ids = model.generate(input_features, language=language, task="transcribe")
 
-        transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[
-            0
-        ]
+        transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
 
         # Clean up temp file if downloaded
         if audio_source.startswith(("http://", "https://")):
@@ -209,9 +203,7 @@ class TranscriptionService:
         self.cache_dir = cache_dir or tempfile.gettempdir()
         self._cache = {}
 
-    async def transcribe(
-        self, audio_source: str, language: str = "en", use_cache: bool = True
-    ) -> Tuple[str, float]:
+    async def transcribe(self, audio_source: str, language: str = "en", use_cache: bool = True) -> Tuple[str, float]:
         """
         Async transcription with caching.
         """
