@@ -32,13 +32,43 @@ class Database:
         """
         self.db_path = db_path
         self._lock = threading.Lock()
+        # Track whether we've created tables for this database file
+        self._initialized: bool = False
 
     def _get_connection(self) -> sqlite3.Connection:
-        """Get a thread-local database connection."""
-        if not hasattr(_local, "connection") or _local.connection is None:
-            _local.connection = sqlite3.connect(self.db_path, check_same_thread=False)
-            _local.connection.row_factory = sqlite3.Row
-        return _local.connection
+        """
+        Get or create a thread-local database connection for this db_path.
+
+        We keep one connection per thread per database file to avoid
+        cross-test interference (e.g., tests using temporary DB files).
+        """
+        conn: Optional[sqlite3.Connection] = getattr(_local, "connection", None)
+        conn_path: Optional[str] = getattr(_local, "db_path", None)
+
+        if conn is None or conn_path != self.db_path:
+            # Close any existing connection for a different database file
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            conn.row_factory = sqlite3.Row
+            _local.connection = conn
+            _local.db_path = self.db_path
+
+        return conn
+
+    def _ensure_initialized(self) -> None:
+        """
+        Ensure the database schema exists.
+
+        This makes endpoint usage and tests robust even if the FastAPI
+        lifespan hook hasn't run yet.
+        """
+        if not self._initialized:
+            self.initialize()
 
     def initialize(self):
         """Create database tables if they don't exist."""
@@ -96,6 +126,7 @@ class Database:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics(event_type)")
 
         conn.commit()
+        self._initialized = True
         logger.info(f"Database initialized: {self.db_path}")
 
     def save_order(self, order_data: Dict[str, Any]) -> str:
@@ -108,6 +139,7 @@ class Database:
         Returns:
             Order ID
         """
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -152,6 +184,7 @@ class Database:
         Returns:
             Order data dictionary or None
         """
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -179,6 +212,7 @@ class Database:
 
     def get_orders_by_phone(self, phone: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Get orders by phone number."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -191,6 +225,7 @@ class Database:
 
     def update_order_status(self, order_id: str, status: str) -> bool:
         """Update order status."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -206,6 +241,7 @@ class Database:
 
     def update_payment_status(self, order_id: str, payment_status: str) -> bool:
         """Update payment status."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -221,6 +257,7 @@ class Database:
 
     def save_interaction(self, interaction: Dict[str, Any]):
         """Save a call interaction log."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -242,6 +279,7 @@ class Database:
 
     def get_call_transcript(self, call_sid: str) -> List[Dict[str, Any]]:
         """Get full transcript for a call."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -261,6 +299,7 @@ class Database:
 
     def _log_event(self, event_type: str, event_data: Dict[str, Any]):
         """Log an analytics event."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -278,6 +317,7 @@ class Database:
 
     def get_call_count(self, days: int = 30) -> int:
         """Get total number of calls in the last N days."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -291,6 +331,7 @@ class Database:
 
     def get_order_count(self, days: int = 30) -> int:
         """Get total number of orders in the last N days."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -301,6 +342,7 @@ class Database:
 
     def get_popular_items(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Get most popular ordered items."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -319,6 +361,7 @@ class Database:
 
     def get_average_order_value(self, days: int = 30) -> float:
         """Get average order value in the last N days."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -330,6 +373,7 @@ class Database:
 
     def get_daily_revenue(self, days: int = 7) -> List[Dict[str, Any]]:
         """Get daily revenue for the last N days."""
+        self._ensure_initialized()
         conn = self._get_connection()
         cursor = conn.cursor()
 
@@ -348,5 +392,11 @@ class Database:
     def close(self):
         """Close database connection."""
         if hasattr(_local, "connection") and _local.connection:
-            _local.connection.close()
+            try:
+                _local.connection.close()
+            except Exception:
+                pass
             _local.connection = None
+        if hasattr(_local, "db_path"):
+            _local.db_path = None
+        self._initialized = False

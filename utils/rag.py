@@ -266,8 +266,16 @@ class MenuRAG:
         return [doc["item"] for doc in self.documents if doc.get("category", "").lower() == category_lower]
 
     def get_full_menu(self) -> Dict[str, Any]:
-        """Return the complete menu data."""
-        return self.menu_data
+        """
+        Return the complete menu data.
+
+        This method is used directly by the FastAPI `/menu` endpoint and in tests.
+        We make sure the menu is initialized so callers never see `None`.
+        """
+        if not self.is_initialized or self.menu_data is None:
+            self.initialize()
+        # In the unlikely event initialization failed, return an empty dict
+        return self.menu_data or {}
 
     def get_popular_items(self) -> List[Dict[str, Any]]:
         """Get all popular items."""

@@ -146,9 +146,61 @@ class LLMProcessor:
         intent = {"type": "unknown", "items": [], "action": None, "quantity": 1}
 
         # Intent detection patterns
-        if any(word in input_lower for word in ["menu", "what do you have", "options", "tell me about"]):
+        # 1) Confirm order (must be checked before add_item so phrases like
+        #    "that's all, I'm done ordering" are treated as confirmation).
+        if any(
+            phrase in input_lower
+            for phrase in [
+                "that's it",
+                "that's all",
+                "im done",
+                "i'm done",
+                "done ordering",
+                "confirm",
+                "place order",
+                "checkout",
+                "pay",
+            ]
+        ):
+            intent["type"] = "confirm_order"
+            intent["action"] = "confirm"
+
+        # 2) Browse menu: explicit menu queries or "what <category> do you have"
+        elif (
+            any(
+                phrase in input_lower
+                for phrase in [
+                    "menu",
+                    "what do you have",
+                    "options",
+                    "tell me about",
+                ]
+            )
+            or (
+                "what" in input_lower
+                and any(
+                    cat in input_lower
+                    for cat in [
+                        "pizza",
+                        "pizzas",
+                        "pasta",
+                        "pastas",
+                        "appetizer",
+                        "appetizers",
+                        "dessert",
+                        "desserts",
+                        "drink",
+                        "drinks",
+                        "salad",
+                        "salads",
+                        "wine",
+                        "wines",
+                    ]
+                )
+            )
+        ):
             intent["type"] = "browse_menu"
-            # Extract category
+            # Extract category (singular form)
             for category in [
                 "pizza",
                 "pasta",
@@ -158,49 +210,40 @@ class LLMProcessor:
                 "salad",
                 "wine",
             ]:
-                if category in input_lower:
-                    intent["category"] = category + "s" if not category.endswith("s") else category
+                if category in input_lower or f"{category}s" in input_lower:
+                    intent["category"] = category + "s"
 
+        # 3) Add item
         elif any(
-            word in input_lower
-            for word in [
+            phrase in input_lower
+            for phrase in [
                 "i'll have",
+                "ill have",
                 "i want",
                 "i'd like",
+                "id like",
                 "can i get",
-                "order",
                 "add",
                 "give me",
+                "get me",
             ]
         ):
             intent["type"] = "add_item"
             intent["action"] = "add"
             intent["items"] = self._extract_items(input_lower)
 
-        elif any(word in input_lower for word in ["remove", "cancel", "take off", "no more", "delete"]):
+        # 4) Remove item
+        elif any(phrase in input_lower for phrase in ["remove", "cancel", "take off", "no more", "delete"]):
             intent["type"] = "remove_item"
             intent["action"] = "remove"
             intent["items"] = self._extract_items(input_lower)
 
+        # 5) Check current order
         elif any(
-            word in input_lower
-            for word in [
-                "that's it",
-                "that's all",
-                "confirm",
-                "done",
-                "place order",
-                "checkout",
-                "pay",
-            ]
-        ):
-            intent["type"] = "confirm_order"
-            intent["action"] = "confirm"
-
-        elif any(
-            word in input_lower
-            for word in [
+            phrase in input_lower
+            for phrase in [
                 "what's in my order",
+                "whats in my order",
                 "my order",
                 "what did i order",
                 "order so far",
@@ -208,10 +251,17 @@ class LLMProcessor:
         ):
             intent["type"] = "check_order"
 
-        elif any(word in input_lower for word in ["recommend", "suggest", "what's good", "popular", "favorite"]):
+        # 6) Recommendations
+        elif any(
+            phrase in input_lower
+            for phrase in ["recommend", "suggest", "what's good", "whats good", "popular", "favorite"]
+        ):
             intent["type"] = "get_recommendation"
 
-        elif "?" in user_input or any(word in input_lower for word in ["what is", "how much", "does it", "is there"]):
+        # 7) Fallback: treat as a question
+        elif "?" in user_input or any(
+            phrase in input_lower for phrase in ["what is", "how much", "does it", "is there"]
+        ):
             intent["type"] = "ask_question"
 
         # Extract quantity
